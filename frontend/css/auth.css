@@ -1,0 +1,150 @@
+/* ============================================================
+   auth.css — Estilos de autenticação e gestão de usuários
+   ============================================================ */
+
+/* ── Botão login/logout na navbar ── */
+.nav-auth-btn {
+  background: transparent;
+  border: 1.5px solid rgba(43,123,185,.35);
+  color: var(--gray-mid);
+  padding: 7px 16px; border-radius: 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .83rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  transition: all var(--transition);
+}
+.nav-auth-btn:hover {
+  background: rgba(43,123,185,.08);
+  border-color: var(--blue); color: var(--blue-dark);
+}
+.nav-auth-btn.nav-auth-logged {
+  background: rgba(232,98,42,.08);
+  border-color: rgba(232,98,42,.4); color: var(--orange);
+}
+.nav-auth-btn.nav-auth-logged:hover {
+  background: rgba(232,98,42,.15);
+  border-color: var(--orange);
+}
+
+/* ── Logo no modal de login ── */
+.login-logo {
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center; margin-bottom: 8px;
+}
+.login-logo img {
+  width: 44px; height: 44px; border-radius: 10px;
+  object-fit: cover; border: 2px solid var(--blue-light);
+}
+.login-logo span {
+  font-family: 'Sora', sans-serif; font-weight: 700;
+  font-size: 1.05rem; color: var(--blue-dark);
+}
+
+/* ── Campo senha com botão de mostrar ── */
+.input-password-wrap {
+  position: relative; display: flex; align-items: center;
+}
+.input-password-wrap input {
+  flex: 1; padding-right: 40px !important;
+}
+.btn-toggle-pass {
+  position: absolute; right: 10px;
+  background: none; border: none; cursor: pointer;
+  font-size: 1rem; line-height: 1; padding: 2px;
+  color: var(--gray-mid); transition: color var(--transition);
+}
+.btn-toggle-pass:hover { color: var(--blue); }
+
+/* ── Mensagem de erro nos formulários ── */
+.form-error {
+  font-size: .82rem; color: #ef4444; font-weight: 500;
+  min-height: 18px; line-height: 1.4;
+}
+
+/* ── Seção de usuários ── */
+.users-section-title {
+  font-family: 'Sora', sans-serif; font-weight: 700;
+  font-size: .9rem; color: var(--gray-dark);
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid rgba(43,123,185,.12);
+}
+
+/* Lista de usuários */
+.users-loading {
+  text-align: center; padding: 20px;
+  color: var(--gray-mid); font-size: .88rem;
+}
+
+.user-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  background: var(--card-bg);
+  border: 1px solid rgba(43,123,185,.1);
+  margin-bottom: 8px;
+  transition: border-color var(--transition);
+}
+.user-row:hover { border-color: rgba(43,123,185,.25); }
+.user-row.user-inactive { opacity: .55; }
+
+.user-info { flex: 1; min-width: 0; }
+.user-name {
+  font-weight: 600; font-size: .88rem; color: var(--gray-dark);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-email {
+  font-size: .75rem; color: var(--gray-mid); margin-top: 1px;
+}
+.user-you {
+  font-size: .7rem; color: var(--blue); font-weight: 500;
+  background: rgba(43,123,185,.1); padding: 1px 6px;
+  border-radius: 10px; margin-left: 4px;
+}
+
+.user-meta { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+
+.user-role-badge {
+  font-size: .68rem; font-weight: 700; padding: 3px 9px;
+  border-radius: 20px; text-transform: uppercase; letter-spacing: .04em;
+}
+.user-role-badge.admin  { background: rgba(232,98,42,.12); color: var(--orange); }
+.user-role-badge.editor { background: rgba(43,123,185,.12); color: var(--blue); }
+
+.user-status { font-size: .72rem; font-weight: 600; }
+.user-status.active   { color: #16a34a; }
+.user-status.inactive { color: #9ca3af; }
+
+.user-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.btn-user-edit, .btn-user-del {
+  background: none; border: none; cursor: pointer;
+  font-size: .85rem; padding: 4px 6px; border-radius: 6px;
+  transition: background var(--transition), color var(--transition);
+}
+.btn-user-edit:hover { background: rgba(43,123,185,.1); }
+.btn-user-del:hover  { background: rgba(239,68,68,.1); color: #ef4444; }
+
+/* Painel de formulário */
+.users-form-panel {
+  background: var(--gray-light);
+  border-radius: 12px; padding: 18px;
+  border: 1px solid rgba(43,123,185,.12);
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Rodapé do modal de usuários */
+.users-roles-legend {
+  display: flex; flex-direction: column; gap: 3px;
+  font-size: .75rem; color: var(--gray-mid);
+}
+
+/* ── Indicador visual de sessão ativa (badge na navbar) ── */
+.nav-session-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: .68rem; font-weight: 600; color: #16a34a;
+  background: rgba(34,197,94,.1); border-radius: 20px;
+  padding: 2px 8px; margin-left: 4px;
+}
+.nav-session-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: #22c55e; border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}

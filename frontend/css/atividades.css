@@ -1,0 +1,176 @@
+/* ============================================================
+   atividades.css — Cards de atividades, galeria e documentos
+   ============================================================ */
+
+#atividades { background: var(--white); }
+
+.section-actions {
+  display: flex; gap: 12px; align-items: center;
+  margin-bottom: 48px; flex-wrap: wrap;
+}
+.section-actions .section-desc { margin-bottom: 0; }
+
+.btn-new-activity {
+  background: var(--blue); color: #fff;
+  border: none; padding: 11px 22px; border-radius: 10px;
+  font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: .88rem;
+  cursor: pointer; white-space: nowrap;
+  transition: background var(--transition), transform .15s;
+  box-shadow: 0 3px 12px rgba(43,123,185,.25);
+}
+.btn-new-activity:hover { background: var(--blue-dark); transform: translateY(-1px); }
+
+/* ── Grid ── */
+.atividades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px,1fr));
+  gap: 28px;
+}
+
+/* ── Card ── */
+.atividade-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(43,123,185,.12);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  display: flex; flex-direction: column;
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.atividade-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(43,123,185,.3);
+}
+
+/* ── Gallery ── */
+.card-gallery {
+  width: 100%; height: 168px; overflow: hidden;
+  position: relative; background: #d8e8f2; cursor: pointer;
+}
+.card-gallery img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; display: block; }
+.card-gallery:hover img { transform: scale(1.05); }
+
+.gallery-count {
+  position: absolute; bottom: 8px; right: 10px;
+  background: rgba(0,0,0,.52); color: #fff;
+  font-size: .72rem; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px; backdrop-filter: blur(4px);
+}
+
+.card-gallery-empty {
+  width: 100%; height: 168px;
+  background: linear-gradient(135deg, rgba(43,123,185,.07), rgba(232,98,42,.05));
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; border-bottom: 1px dashed rgba(43,123,185,.2);
+  cursor: default; transition: background var(--transition);
+}
+.card-gallery-empty .gal-icon { font-size: 1.9rem; opacity: .4; }
+.card-gallery-empty .gal-hint { font-size: .74rem; color: var(--gray-mid); font-weight: 500; }
+
+/* Visitante sem foto e sem login — só uma faixa colorida discreta */
+.card-gallery-public {
+  height: 5px !important;
+  background: linear-gradient(90deg, var(--blue-light), var(--orange-light)) !important;
+  border-bottom: none !important;
+  display: block !important;
+}
+
+/* ── Card body ── */
+.card-body { padding: 22px 24px; flex: 1; display: flex; flex-direction: column; gap: 0; }
+
+.card-top-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
+
+.card-icon {
+  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--blue-light), var(--blue));
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+}
+.card-icon.orange { background: linear-gradient(135deg, var(--orange-light), var(--orange)); }
+
+.card-status { padding: 4px 11px; border-radius: 20px; font-size: .7rem; font-weight: 700; white-space: nowrap; }
+.status-done { background: rgba(34,197,94,.12); color: #15803d; }
+.status-prog { background: rgba(234,98,42,.12);  color: var(--orange); }
+.status-plan { background: rgba(43,123,185,.12); color: var(--blue); }
+
+.card-tag {
+  display: inline-block; font-size: .68rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 20px;
+  background: rgba(43,123,185,.1); color: var(--blue); margin-bottom: 8px;
+}
+
+.card-title {
+  font-family: 'Sora', sans-serif; font-size: 1.05rem; font-weight: 700;
+  color: var(--gray-dark); margin-bottom: 8px;
+}
+
+.card-desc {
+  font-size: .87rem; color: var(--gray-mid); line-height: 1.65;
+  flex: 1; margin-bottom: 14px;
+}
+
+/* ── Members ── */
+.card-members {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .79rem; color: var(--gray-mid);
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.card-members svg { color: var(--blue); flex-shrink: 0; }
+.member-chip {
+  background: rgba(43,123,185,.08); color: var(--blue-dark);
+  padding: 2px 9px; border-radius: 20px; font-size: .72rem; font-weight: 500;
+}
+
+/* ── Docs ── */
+.card-docs { border-top: 1px solid rgba(43,123,185,.12); padding-top: 14px; margin-top: 4px; }
+.card-docs-title {
+  font-size: .71rem; font-weight: 700; color: var(--gray-mid);
+  letter-spacing: .06em; text-transform: uppercase; margin-bottom: 9px;
+}
+.doc-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+
+.doc-item {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,.85); border: 1px solid rgba(43,123,185,.14);
+  border-radius: 8px; padding: 7px 10px;
+  font-size: .8rem; color: var(--gray-dark); transition: background var(--transition), border-color var(--transition);
+}
+.doc-item:hover { background: rgba(43,123,185,.06); border-color: rgba(43,123,185,.28); }
+.doc-icon  { font-size: 1rem; flex-shrink: 0; }
+.doc-name  { flex: 1; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-type  { font-size: .65rem; color: var(--gray-mid); background: var(--gray-light); padding: 2px 7px; border-radius: 10px; flex-shrink: 0; }
+.doc-open, .doc-del {
+  background: none; border: none; cursor: pointer; font-size: .85rem;
+  color: var(--gray-mid); padding: 2px 4px; border-radius: 4px; flex-shrink: 0;
+  transition: color var(--transition), background var(--transition);
+}
+.doc-open:hover { color: var(--blue); background: rgba(43,123,185,.1); }
+.doc-del:hover  { color: #ef4444; background: rgba(239,68,68,.08); }
+
+.doc-add {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  border: 1px dashed rgba(43,123,185,.25); border-radius: 8px;
+  padding: 8px 12px; font-size: .78rem; color: var(--gray-mid);
+  transition: border-color var(--transition), color var(--transition);
+  font-family: 'DM Sans', sans-serif;
+}
+.doc-add:hover { border-color: var(--blue); color: var(--blue); }
+
+/* ── Card actions ── */
+.card-actions {
+  display: flex; gap: 8px; margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid rgba(43,123,185,.1);
+}
+.btn-edit-card, .btn-add-photo {
+  flex: 1; background: var(--gray-light); border: none; border-radius: 8px;
+  padding: 8px; font-size: .78rem; font-weight: 600; color: var(--gray-mid);
+  cursor: pointer; transition: background var(--transition), color var(--transition);
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-edit-card:hover { background: rgba(43,123,185,.12); color: var(--blue-dark); }
+.btn-add-photo:hover { background: rgba(232,98,42,.1); color: var(--orange); }
+
+@media (max-width: 600px) {
+  .atividades-grid { grid-template-columns: 1fr; }
+}

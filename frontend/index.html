@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PET-Saúde | Gestão e Governança dos Sistemas de Informação em Saúde</title>
+
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/nav.css" />
+  <link rel="stylesheet" href="css/hero.css" />
+  <link rel="stylesheet" href="css/atividades.css" />
+  <link rel="stylesheet" href="css/participantes.css" />
+  <link rel="stylesheet" href="css/sobre.css" />
+  <link rel="stylesheet" href="css/modals.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/footer.css" />
+
+  <style>
+    /* ── Spinner global ── */
+    #global-spinner {
+      display:none; position:fixed; inset:0; z-index:9999;
+      background:rgba(255,255,255,.55); backdrop-filter:blur(2px);
+      align-items:center; justify-content:center;
+    }
+    #global-spinner.show { display:flex; }
+    .spinner-ring {
+      width:48px; height:48px; border-radius:50%;
+      border:4px solid var(--gray-light); border-top-color:var(--blue);
+      animation:spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    /* ── Toast ── */
+    .toast {
+      position:fixed; bottom:28px; right:28px; z-index:9998;
+      background:var(--gray-dark); color:#fff;
+      padding:12px 22px; border-radius:10px; font-size:.88rem; font-weight:500;
+      box-shadow:0 6px 24px rgba(0,0,0,.22);
+      transform:translateY(20px); opacity:0;
+      transition:transform .3s ease,opacity .3s ease; max-width:340px;
+    }
+    .toast.show    { transform:translateY(0); opacity:1; }
+    .toast-success { border-left:4px solid #22c55e; }
+    .toast-error   { border-left:4px solid #ef4444; background:#1e1e2e; }
+
+    /* ── Empty state ── */
+    .empty-state {
+      grid-column:1/-1; text-align:center; padding:60px 20px;
+      color:var(--gray-mid); font-size:.95rem;
+      background:var(--card-bg); border-radius:var(--radius-card);
+      border:1px dashed rgba(43,123,185,.2);
+    }
+
+    /* ── Nav auth button ── */
+    #nav-auth-btn {
+      background:transparent; color:var(--blue);
+      border:2px solid var(--blue); padding:7px 18px;
+      border-radius:20px; font-size:.84rem; font-weight:600;
+      cursor:pointer; transition:all .2s; white-space:nowrap;
+      font-family:'DM Sans',sans-serif;
+    }
+    #nav-auth-btn:hover { background:var(--blue); color:#fff; }
+    #nav-auth-btn.nav-auth-logged { border-color:var(--orange); color:var(--orange); }
+    #nav-auth-btn.nav-auth-logged:hover { background:var(--orange); color:#fff; }
+
+    /* ── Auth modal ── */
+    .auth-modal-box {
+      background:#fff; border-radius:18px; width:100%; max-width:420px;
+      box-shadow:0 24px 60px rgba(0,0,0,.25); animation:fadeUp .25s ease both; overflow:hidden;
+    }
+    .auth-modal-header {
+      background:linear-gradient(135deg,var(--blue-dark),var(--blue));
+      padding:28px 28px 22px; text-align:center; color:#fff;
+    }
+    .auth-modal-header h2 {
+      font-family:'Sora',sans-serif; font-size:1.3rem; font-weight:800; margin-bottom:4px;
+    }
+    .auth-modal-header p { font-size:.85rem; opacity:.8; }
+    .auth-modal-body { padding:24px 28px; display:flex; flex-direction:column; gap:16px; }
+    .auth-modal-footer { padding:0 28px 24px; display:flex; flex-direction:column; gap:10px; }
+    .auth-error {
+      background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.25);
+      color:#dc2626; font-size:.82rem; padding:10px 14px; border-radius:8px; display:none;
+    }
+    .auth-error:not(:empty) { display:block; }
+    .btn-auth-submit {
+      background:var(--blue); color:#fff; border:none;
+      padding:13px; border-radius:10px; font-size:.95rem; font-weight:700;
+      cursor:pointer; transition:background .2s; font-family:'DM Sans',sans-serif; width:100%;
+    }
+    .btn-auth-submit:hover:not(:disabled) { background:var(--blue-dark); }
+    .btn-auth-submit:disabled { opacity:.6; cursor:not-allowed; }
+    .btn-auth-secondary {
+      background:none; border:none; color:var(--gray-mid);
+      font-size:.82rem; cursor:pointer; text-decoration:underline;
+      font-family:'DM Sans',sans-serif; padding:4px; text-align:center;
+    }
+    .btn-auth-secondary:hover { color:var(--blue); }
+
+    /* ── Users modal ── */
+    .users-list {
+      display:flex; flex-direction:column; gap:8px;
+      max-height:260px; overflow-y:auto;
+      background:var(--gray-light); border-radius:10px; padding:10px;
+      border:1px solid rgba(43,123,185,.15);
+    }
+    .users-loading { text-align:center; padding:20px; color:var(--gray-mid); font-size:.88rem; }
+    .user-row {
+      display:flex; align-items:center; gap:12px;
+      background:#fff; border:1px solid rgba(43,123,185,.12);
+      border-radius:10px; padding:10px 14px;
+    }
+    .user-row.user-inactive { opacity:.55; }
+    .user-info { flex:1; min-width:0; }
+    .user-name  { font-weight:600; font-size:.88rem; color:var(--gray-dark); }
+    .user-email { font-size:.76rem; color:var(--gray-mid); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .user-you   { font-size:.7rem; background:rgba(43,123,185,.1); color:var(--blue); padding:1px 6px; border-radius:10px; font-weight:600; margin-left:4px; }
+    .user-meta  { display:flex; flex-direction:column; gap:4px; align-items:flex-end; flex-shrink:0; }
+    .user-role-badge { font-size:.67rem; font-weight:700; padding:2px 8px; border-radius:20px; text-transform:uppercase; }
+    .user-role-badge.admin  { background:rgba(232,98,42,.12); color:var(--orange); }
+    .user-role-badge.editor { background:rgba(43,123,185,.12); color:var(--blue); }
+    .user-status        { font-size:.7rem; }
+    .user-status.active { color:#16a34a; }
+    .user-status.inactive { color:#9ca3af; }
+    .user-actions { display:flex; gap:4px; flex-shrink:0; }
+    .btn-user-edit,.btn-user-del {
+      background:none; border:none; cursor:pointer; font-size:.85rem;
+      padding:4px 6px; border-radius:6px; transition:background .2s;
+    }
+    .btn-user-edit:hover { background:rgba(43,123,185,.1); }
+    .btn-user-del:hover  { background:rgba(239,68,68,.1); }
+    .users-divider { border:none; border-top:1px solid rgba(43,123,185,.12); margin:16px 0 12px; }
+    .user-form-section-title {
+      font-family:'Sora',sans-serif; font-weight:700;
+      font-size:.95rem; color:var(--gray-dark); margin-bottom:2px;
+    }
+    .user-form-pass-hint { font-size:.75rem; color:var(--gray-mid); margin-top:-10px; display:none; }
+
+    /* ── Sobre section auth buttons ── */
+    .sobre-auth-actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+    .btn-sobre-action {
+      background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22);
+      color:rgba(255,255,255,.85); padding:10px 18px; border-radius:10px;
+      font-family:'DM Sans',sans-serif; font-weight:600; font-size:.85rem;
+      cursor:pointer; transition:background .2s; display:none;
+    }
+    .btn-sobre-action:hover { background:rgba(255,255,255,.2); color:#fff; }
+    .btn-sobre-action.admin-only { /* mostrado só para admins */ }
+  </style>
+</head>
+<body>
+
+<!-- SPINNER -->
+<div id="global-spinner"><div class="spinner-ring"></div></div>
+
+
+<!-- ══ NAV ══ -->
+<nav>
+  <a href="#" class="nav-brand">
+    <img src="assets/logo.png" alt="Logo PET-Saúde" class="nav-logo" onerror="this.style.display='none'" />
+    <div>
+      <div class="nav-title">PET-<span>Saúde</span> Digital</div>
+      <div class="nav-subtitle">Gestão e Governança dos Sistemas de Informação em Saúde</div>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#atividades">Atividades</a></li>
+    <li><a href="#participantes">Participantes</a></li>
+    <li><a href="#sobre">Sobre</a></li>
+  </ul>
+  <button id="nav-auth-btn">🔒 Login</button>
+  <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-bg-circle c1"></div>
+  <div class="hero-bg-circle c2"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Projeto Ativo · Edital PET-Saúde</div>
+    <h1 class="hero-title">
+      <span class="accent">Gestão e Governança</span><br/>
+      dos Sistemas de<br/>
+      <span class="accent-o">Informação em Saúde</span>
+    </h1>
+    <p class="hero-desc">
+      Portal centralizado do PET-Saúde Digital. Reunimos as atividades, participantes
+      e produções do projeto focado na integração e qualidade de dados em saúde.
+    </p>
+    <div class="hero-buttons">
+      <a href="#atividades" class="btn-primary">Explorar Atividades</a>
+      <a href="#participantes" class="btn-secondary">Ver Equipe</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num" id="stat-members">…</div>
+        <div class="stat-label">Participantes ativos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">6<span>+</span></div>
+        <div class="stat-label">Cursos envolvidos</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-total">…</div>
+        <div class="stat-label">Atividades cadastradas</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="stat-done">…</div>
+        <div class="stat-label">Atividades concluídas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══ ATIVIDADES ══ -->
+<section id="atividades">
+  <span class="section-label">📋 Realizações</span>
+  <h2 class="section-title">Atividades do <span class="accent">Projeto</span></h2>
+  <div class="section-actions">
+    <p class="section-desc">
+      Cada card reúne descrição, responsáveis, galeria de fotos e documentos.
+      Faça <strong>login</strong> para adicionar ou editar conteúdo.
+    </p>
+    <button class="btn-new-activity btn-edit-card" onclick="App.openAddActivity()" style="display:none">
+      ➕ Nova Atividade
+    </button>
+  </div>
+  <div class="atividades-grid" id="atividades-grid">
+    <div class="empty-state">Carregando atividades…</div>
+  </div>
+</section>
+
+
+<!-- ══ PARTICIPANTES ══ -->
+<section id="participantes">
+  <span class="section-label">👥 Equipe</span>
+  <h2 class="section-title">Nossos <span class="accent">Participantes</span></h2>
+  <p class="section-desc">
+    Equipe multiprofissional com 11 estudantes de 6 cursos. Faça login para editar.
+  </p>
+  <div class="participantes-grid" id="participantes-grid"></div>
+</section>
+
+
+<!-- ══ SOBRE ══ -->
+<section id="sobre">
+  <span class="section-label">ℹ️ O projeto</span>
+  <h2 class="section-title">Sobre o PET-Saúde Digital</h2>
+  <p class="section-desc">
+    Integrando ensino, serviço e comunidade com foco em Gestão e Governança dos
+    Sistemas de Informação em Saúde para Integração e Qualidade de Dados.
+  </p>
+  <div class="sobre-grid">
+    <div>
+      <ul class="sobre-list" id="project-list"></ul>
+      <div class="sobre-auth-actions">
+        <button class="btn-sobre-action btn-edit-project" onclick="App.openEditProject()">
+          ✏️ Editar projeto
+        </button>
+        <button id="btn-manage-users" class="btn-sobre-action admin-only" onclick="Auth.openUsersModal()">
+          👤 Gerenciar usuários
+        </button>
+        <button id="btn-change-password" class="btn-sobre-action" onclick="Auth.openChangePasswordModal()">
+          🔑 Alterar senha
+        </button>
+      </div>
+    </div>
+    <div class="kpi-grid" id="kpi-grid"></div>
+  </div>
+</section>
+
+
+<!-- ══ LIGHTBOX ══ -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-inner">
+    <button class="lb-close" onclick="Lightbox.close()">✕</button>
+    <button class="lb-nav lb-prev" onclick="Lightbox.nav(-1)">‹</button>
+    <img id="lb-img" src="" alt="Foto da atividade" />
+    <button class="lb-nav lb-next" onclick="Lightbox.nav(1)">›</button>
+    <div class="lb-cap" id="lb-cap"></div>
+  </div>
+</div>
+
+
+<!-- ══ MODAIS DE EDIÇÃO ══ -->
+<div class="modal-overlay" id="modal-edit-activity"></div>
+<div class="modal-overlay" id="modal-add-activity"></div>
+<div class="modal-overlay" id="modal-edit-participant"></div>
+<div class="modal-overlay" id="modal-edit-kpi"></div>
+<div class="modal-overlay" id="modal-edit-project"></div>
+
+
+<!-- ══ MODAL LOGIN ══ -->
+<div class="modal-overlay" id="modal-login">
+  <div class="auth-modal-box">
+    <div class="auth-modal-header">
+      <h2>🔒 Área Restrita</h2>
+      <p>Faça login para editar o conteúdo do portal</p>
+    </div>
+    <div class="auth-modal-body">
+      <div class="form-group">
+        <label>E-mail</label>
+        <input id="login-email" type="email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input id="login-password" type="password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div id="login-error" class="auth-error"></div>
+    </div>
+    <div class="auth-modal-footer">
+      <button id="login-submit-btn" class="btn-auth-submit" onclick="Auth.submitLogin()">Entrar</button>
+      <button class="btn-auth-secondary" onclick="Auth.closeLoginModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL GERENCIAR USUÁRIOS ══ -->
+<div class="modal-overlay" id="modal-users">
+  <div class="modal-box modal-large">
+    <div class="modal-header">
+      <h3>👤 Gerenciar Usuários</h3>
+      <button class="modal-close" onclick="Auth.closeUsersModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <div class="form-group">
+        <label>Usuários cadastrados</label>
+        <div id="users-list" class="users-list">
+          <div class="users-loading">Carregando…</div>
+        </div>
+      </div>
+
+      <hr class="users-divider">
+      <div class="user-form-section-title" id="user-form-title">Novo Usuário</div>
+
+      <div class="form-row">
+        <div class="form-group flex-2">
+          <label>Nome</label>
+          <input id="user-form-name" type="text" placeholder="Nome completo">
+        </div>
+        <div class="form-group">
+          <label>Função</label>
+          <select id="user-form-role">
+            <option value="editor">Editor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>E-mail</label>
+        <input id="user-form-email" type="email" placeholder="email@exemplo.com">
+      </div>
+
+      <div class="form-group">
+        <label>Senha</label>
+        <input id="user-form-password" type="password" placeholder="Mínimo 6 caracteres">
+        <div id="user-form-pass-hint" class="user-form-pass-hint">
+          Deixe em branco para não alterar a senha atual.
+        </div>
+      </div>
+
+      <div class="form-group" style="flex-direction:row;align-items:center;gap:10px;margin-top:-4px">
+        <input type="checkbox" id="user-form-active" checked style="width:16px;height:16px;cursor:pointer;flex-shrink:0">
+        <label for="user-form-active" style="text-transform:none;letter-spacing:0;font-size:.88rem;cursor:pointer;font-weight:400">
+          Usuário ativo
+        </label>
+      </div>
+
+      <input type="hidden" id="user-form-id">
+      <div id="users-form-error" class="auth-error"></div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="Auth.clearUserForm()">Limpar</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn-cancel" onclick="Auth.closeUsersModal()">Fechar</button>
+        <button id="user-form-save-btn" class="btn-save" onclick="Auth.saveUser()">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL ALTERAR SENHA ══ -->
+<div class="modal-overlay" id="modal-change-password">
+  <div class="auth-modal-box">
+    <div class="auth-modal-header">
+      <h2>🔑 Alterar Senha</h2>
+      <p>Troque a senha da sua conta</p>
+    </div>
+    <div class="auth-modal-body">
+      <div class="form-group">
+        <label>Senha atual</label>
+        <input id="cp-current" type="password" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Nova senha</label>
+        <input id="cp-new" type="password" placeholder="Mínimo 6 caracteres">
+      </div>
+      <div class="form-group">
+        <label>Confirmar nova senha</label>
+        <input id="cp-confirm" type="password" placeholder="Repita a nova senha">
+      </div>
+      <div id="cp-error" class="auth-error"></div>
+    </div>
+    <div class="auth-modal-footer">
+      <button id="cp-submit-btn" class="btn-auth-submit" onclick="Auth.submitChangePassword()">
+        Alterar senha
+      </button>
+      <button class="btn-auth-secondary" onclick="Auth.closeChangePasswordModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="nav-title" style="font-family:'Sora',sans-serif;font-weight:700;color:#fff;">
+        PET-<span style="color:var(--orange)">Saúde</span> Digital
+      </div>
+      <p class="footer-desc">
+        Portal centralizado do projeto PET-Saúde com foco em Gestão e Governança
+        dos Sistemas de Informação em Saúde.
+      </p>
+    </div>
+    <div class="footer-links">
+      <h4>Navegação</h4>
+      <ul>
+        <li><a href="#hero">Início</a></li>
+        <li><a href="#atividades">Atividades</a></li>
+        <li><a href="#participantes">Participantes</a></li>
+        <li><a href="#sobre">Sobre</a></li>
+      </ul>
+    </div>
+    <div class="footer-links">
+      <h4>Contato</h4>
+      <ul>
+        <li><a href="#" id="footer-email">—</a></li>
+        <li><a href="https://www.gov.br/saude" target="_blank" rel="noopener">Ministério da Saúde</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2025 PET-Saúde Digital. Todos os direitos reservados.</div>
+    <span>Feito com ❤️ pela equipe <span>PET-Saúde</span></span>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════
+     SCRIPTS — Ordem obrigatória:
+     API_BASE → data → auth → api → render → lightbox → modal → app
+══════════════════════════════════════════════ -->
+<script>
+  /*
+   * ⚠️  Configure a URL do backend aqui.
+   * Dev        : http://localhost:3001
+   * Produção   : https://seu-backend.onrender.com
+   */
+  window.API_BASE = "https://pet-saude-y8t7.onrender.com";
+</script>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/api.js"></script>
+<script src="js/render.js"></script>
+<script src="js/lightbox.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+/* ============================================================
+   base.css — Variáveis, reset, tipografia, utilitários
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --blue:        #2B7BB9;
+  --blue-dark:   #1A5A8A;
+  --blue-light:  #5BA3D9;
+  --orange:      #E8622A;
+  --orange-light:#F28C5E;
+  --gray-dark:   #1E2D3D;
+  --gray-mid:    #4A6070;
+  --gray-light:  #EAF1F7;
+  --white:       #FFFFFF;
+  --card-bg:     #F4F9FF;
+  --radius-card: 18px;
+  --shadow-card: 0 2px 12px rgba(43,123,185,0.08);
+  --shadow-hover: 0 16px 40px rgba(43,123,185,0.15);
+  --transition: .22s ease;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--white);
+  color: var(--gray-dark);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--gray-light); }
+::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 3px; }
+
+/* ── Section base ── */
+section { padding: 90px 5vw; }
+
+.section-label {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Sora', sans-serif;
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 800; color: var(--gray-dark);
+  line-height: 1.2; margin-bottom: 14px;
+}
+.section-title .accent { color: var(--blue); }
+.section-desc {
+  font-size: 1rem; color: var(--gray-mid);
+  max-width: 600px; line-height: 1.7; margin-bottom: 48px;
+}
+
+/* ── Buttons ── */
+.btn-primary {
+  background: var(--blue); color: #fff;
+  padding: 13px 28px; border-radius: 10px;
+  font-weight: 600; font-size: 0.95rem;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 4px 14px rgba(43,123,185,0.3);
+}
+.btn-primary:hover { background: var(--blue-dark); transform: translateY(-2px); }
+
+.btn-secondary {
+  background: transparent; color: var(--orange);
+  padding: 13px 28px; border-radius: 10px;
+  font-weight: 600; font-size: 0.95rem;
+  text-decoration: none; border: 2px solid var(--orange);
+  cursor: pointer; transition: all var(--transition);
+}
+.btn-secondary:hover { background: var(--orange); color: #fff; transform: translateY(-2px); }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-28px); }
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50%     { transform: scale(1.4); opacity: .6; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  section { padding: 60px 5vw; }
+}

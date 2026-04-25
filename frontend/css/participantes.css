@@ -1,0 +1,53 @@
+/* ============================================================
+   participantes.css — Cards de participantes
+   ============================================================ */
+
+#participantes { background: var(--gray-light); }
+
+.participantes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(185px,1fr));
+  gap: 18px;
+}
+
+.participante-card {
+  background: var(--white); border-radius: 16px;
+  padding: 26px 18px 18px; text-align: center;
+  border: 1px solid rgba(43,123,185,.1);
+  box-shadow: var(--shadow-card);
+  transition: transform var(--transition), box-shadow var(--transition);
+  position: relative;
+}
+.participante-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+
+/* avatar */
+.avatar {
+  width: 62px; height: 62px; border-radius: 50%;
+  margin: 0 auto 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Sora', sans-serif; font-weight: 800; font-size: 1.15rem; color: #fff;
+}
+.avatar.blue   { background: linear-gradient(135deg, var(--blue-light), var(--blue-dark)); }
+.avatar.orange { background: linear-gradient(135deg, var(--orange-light), var(--orange)); }
+
+.participante-name   { font-family: 'Sora', sans-serif; font-weight: 700; font-size: .95rem; color: var(--gray-dark); margin-bottom: 3px; }
+.participante-role   { font-size: .72rem; color: var(--orange); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.participante-curso  { font-size: .79rem; color: var(--gray-mid); margin-bottom: 12px; }
+
+.participante-tags   { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 10px; }
+.tag                 { font-size: .67rem; padding: 3px 9px; background: rgba(43,123,185,.08); color: var(--blue-dark); border-radius: 20px; font-weight: 500; }
+.tag-empty           { background: rgba(0,0,0,.04); color: #aaa; }
+
+.btn-edit-member {
+  position: absolute; top: 10px; right: 10px;
+  background: none; border: none; cursor: pointer;
+  font-size: .8rem; color: var(--gray-mid);
+  padding: 4px 6px; border-radius: 6px;
+  transition: background var(--transition), color var(--transition);
+  line-height: 1;
+}
+.btn-edit-member:hover { background: rgba(43,123,185,.1); color: var(--blue); }
+
+@media (max-width: 600px) {
+  .participantes-grid { grid-template-columns: repeat(2,1fr); }
+}
