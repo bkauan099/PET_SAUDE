@@ -2,9 +2,9 @@
  * server.js — Ponto de entrada do servidor PET-Saúde Digital
  *
  * Inicie com:
- *   npm start         (produção)
- *   npm run dev       (desenvolvimento com nodemon)
- *   npm run db:init   (cria tabelas e seed no banco)
+ * npm start        (produção)
+ * npm run dev      (desenvolvimento com nodemon)
+ * npm run db:init  (cria tabelas e seed no banco)
  */
 
 require("dotenv").config();
@@ -37,20 +37,18 @@ const UPLOADS_DIR = path.resolve(process.env.UPLOADS_DIR || "uploads");
 ══════════════════════════════════════ */
 
 /* CORS — aceita o frontend Vercel e localhost em dev */
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  "http://localhost:3000",
-  "http://localhost:5500",
-  "http://127.0.0.1:5500",
-].filter(Boolean);
-
-const cors = require('cors');
-
 app.use(cors({
-    origin: 'https://pet-saude-delta.vercel.app', // Permite apenas o seu frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: [
+      'https://pet-saude-delta.vercel.app', // Permite o seu frontend atual
+      process.env.FRONTEND_URL,             // Mantém a variável caso você precise depois
+      'http://localhost:3000',              // Permite testes locais
+      'http://localhost:5500',
+      'http://127.0.0.1:5500'
+    ].filter(Boolean), // Evita adicionar valores vazios caso a variável não exista
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // OPTIONS adicionado para o preflight
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 
@@ -89,7 +87,7 @@ app.listen(PORT, () => {
   console.log(`   Ambiente  : ${process.env.NODE_ENV || "development"}`);
   console.log(`   Banco     : ${process.env.DATABASE_URL ? "DATABASE_URL ✅" : `${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`}`);
   console.log(`   Uploads   : ${UPLOADS_DIR}`);
-  console.log(`   CORS ok   : ${allowedOrigins.join(" | ")}\n`);
+  console.log(`   CORS ok   : Vercel e Localhost liberados\n`);
 });
 
 module.exports = app;
