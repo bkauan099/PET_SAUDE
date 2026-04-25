@@ -37,16 +37,10 @@ const UPLOADS_DIR = path.resolve(process.env.UPLOADS_DIR || "uploads");
 ══════════════════════════════════════ */
 
 /* CORS — aceita o frontend Vercel e localhost em dev */
+/* CORS — Aberto para qualquer origem (Cuidado em produção!) */
 app.use(cors({
-    origin: [
-      'https://pet-saude-delta.vercel.app', // URL anterior
-      'https://pet-saude-flax.vercel.app',  // <--- SUA NOVA URL ADICIONADA AQUI!
-      process.env.FRONTEND_URL,             
-      'http://localhost:3000',              
-      'http://localhost:5500',
-      'http://127.0.0.1:5500'
-    ].filter(Boolean), 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+    origin: '*', // O asterisco significa "aceitar requisições de qualquer lugar"
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
