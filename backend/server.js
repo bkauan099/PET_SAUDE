@@ -44,17 +44,13 @@ const allowedOrigins = [
   "http://127.0.0.1:5500",
 ].filter(Boolean);
 
-app.use(cors({
-  origin(origin, cb) {
-    /* Permite requisições sem origin (Postman, curl, etc.) em dev */
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error(`CORS bloqueado para origem: ${origin}`));
-  },
-  methods: ["GET","POST","PUT","PATCH","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"],
-  credentials: true,
-}));
+const cors = require('cors');
 
+app.use(cors({
+    origin: 'https://pet-saude-delta.vercel.app', // Permite apenas o seu frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: true, limit: "2mb" }));
 
